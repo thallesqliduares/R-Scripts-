@@ -1,7 +1,7 @@
 #set directory#
 
 ## Low-level blocks of utilities ##
-## Water produced in the range of [0,50.000) m³
+## Water produced in the range of [0,50.000] m³
 
 setwd("C:\\Program Files\\R\\Dados")
 
@@ -111,7 +111,7 @@ data$p2p2<-0.5*((data$p2)*(data$p2))
 data$p3p3<-0.5*((data$p3)*(data$p3))
 
 
-#Modelsingle cost equation#
+#Model single cost equation#
 
 #est1<-plm(ct~AguaProd+EsgCol+LigAtv+ExtRed+p2+p3+v8+v9+v10+v11+v12+v14+v15+
 #            v16+v17+v19+v20+v21+factor(data$Estado), data, model="pooling")
@@ -122,17 +122,18 @@ data$p3p3<-0.5*((data$p3)*(data$p3))
 
 #share labor
 
-data$s_l<-log(data$FN010/mean(data$FN015))#-data$p1
+data$s_l<-log(data$FN010/mean(data$FN015))
 
 #share energy
 
-data$s_e<-log(data$FN013/mean(data$FN015))#-data$p1
+data$s_e<-log(data$FN013/mean(data$FN015))
+
 #share services
 
-#data$s_s<-log(data$FN014/mean(data$FN015))-data$p1
+#data$s_s<-log(data$FN014/mean(data$FN015))
 
 
-#Criando matriz de restrições para estimação do sistema de equações
+# Imposing restriction matrix for SUR estimation
 
 R<-matrix(0,nrow=14,ncol=75)
 
@@ -141,7 +142,7 @@ R[1,62]<-R[2,69]<-R[3,63]<-R[4,70]<-R[5,64]<-R[6,71]<-R[7,65]<-R[8,72]<-R[9,66]<
 
 #R
 
-#Estimando o sistema de equações de custos #
+#Estimating SUR in panel data framework #
 
 est2<-plm(list(ct~AguaProd+EsgCol+LigAtv+ExtRed+p2+p3+AgEsg+AgLig+AgExt+Agp2+Agp3+AgAg+
                  +EsgLig+EsgExt+Esgp2+Esgp3+EsgEsg+LigExt+Ligp2+Ligp3+LigLig+Extp2+Extp3+ExtExt+p2p3+p2p2
