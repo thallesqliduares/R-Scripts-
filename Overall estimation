@@ -1,37 +1,40 @@
-#set directory#
+### Overall Estimation ###
 
-## All Blocks ##
+#Set directory
 
 setwd("C:\\Program Files\\R\\Dados")
 
 list.files()
 
-#upload packages#
+#Upload packages
 
 library(readxl)
+
 library(plm)
 
-#upload database#
+#Upload database
 
 data<-readxl::read_excel("C:\\Program Files\\R\\Dados\\Base SNIS.xlsx")
 
 
-# Outputs #
+# Outputs 
 
 data$AguaProd<-log(data$AG006/mean(data$AG006))
 
 data$EsgCol<-log(data$ES005/mean(data$ES005))
 
 
-#Water Connections # 
+#Water Connections 
 
 data$LigAtv<-log(data$AG002/mean(data$AG002))
 
-# Proxy for stock capital: length of network#
+
+# Proxy for stock capital: length of network
 
 data$ExtRed<-log(data$AG005/mean(data$AG005))
 
-# Price of contracted out services will be used as reference price##
+
+# Price of contracted out services will be used as reference price
 
 data$p1<-log(data$p_s/mean(data$p_s))
 
@@ -44,12 +47,10 @@ data$p3<-log(data$p_e/mean(data$p_e))-data$p1
 data$ct<-log(data$FN015/mean(data$FN015))-data$p1
 
 
-
 # Translog Cost Function ## 
 
 
 # Interaction terms for water produced
-
 
 data$AgEsg<-(data$AguaProd)*(data$EsgCol)
 
@@ -64,7 +65,8 @@ data$Agp3<-(data$AguaProd)*(data$p3)
 data$AgAg<-0.5*((data$AguaProd)*(data$AguaProd))
 
 
-# Interaction terms for sewage collected #
+# Interaction terms for sewage collected 
+
 
 data$EsgLig<-(data$EsgCol)*(data$LigAtv)
 
@@ -77,7 +79,7 @@ data$Esgp3<-(data$EsgCol)*(data$p3)
 data$EsgEsg<-0.5*((data$EsgCol)*(data$EsgCol))
 
 
-# Interaction terms for water connections
+#Interaction terms for water connections
 
 data$LigExt<-(data$LigAtv)*(data$ExtRed)
 
@@ -110,12 +112,6 @@ data$p2p2<-0.5*((data$p2)*(data$p2))
 data$p3p3<-0.5*((data$p3)*(data$p3))
 
 
-#Modelsingle cost equation#
-
-#est1<-plm(ct~AguaProd+EsgCol+LigAtv+ExtRed+p2+p3+v8+v9+v10+v11+v12+v14+v15+
-#            v16+v17+v19+v20+v21+factor(data$Estado), data, model="pooling")
-
-#summary(est1)
 
 #############Cost share equations##########
 
@@ -126,12 +122,10 @@ data$s_l<-log(data$FN010/mean(data$FN015))
 #share energy
 
 data$s_e<-log(data$FN013/mean(data$FN015))
-#share services
-
-#data$s_s<-log(data$FN014/mean(data$FN015))-data$p1
 
 
-#Criando matriz de restrições para estimação do sistema de equações
+# Restrict matrix for SUR estimation
+## There's 14 restrictions over 93 coefficients
 
 R<-matrix(0,nrow=14,ncol=93)
 
@@ -140,14 +134,15 @@ R[1,80]<-R[2,87]<-R[3,81]<-R[4,88]<-R[5,82]<-R[6,89]<-R[7,83]<-R[8,90]<-R[9,84]<
 
 #R
 
-#Estimando o sistema de equações de custos #
+#Estimation of SUR model
 
-est2<-plm(list(ct~AguaProd+EsgCol+LigAtv+ExtRed+p2+p3+AgEsg+AgLig+AgExt+Agp2+Agp3+AgAg+
+est1<-plm(list(ct~AguaProd+EsgCol+LigAtv+ExtRed+p2+p3+AgEsg+AgLig+AgExt+Agp2+Agp3+AgAg+
                  +EsgLig+EsgExt+Esgp2+Esgp3+EsgEsg+LigExt+Ligp2+Ligp3+LigLig+Extp2+Extp3
                +ExtExt+p2p3+p2p2+p3p3+factor(data$Bloco)+factor(data$Ano),
                s_l~AguaProd+EsgCol+LigAtv+ExtRed+p2+p3,
-               s_e~AguaProd+EsgCol+LigAtv+ExtRed+p2+p3),data,model="random",random.method = "nerlove", restrict.matrix = R)
-summary(est2)
+               s_e~AguaProd+EsgCol+LigAtv+ExtRed+p2+p3),data,model="random",
+               random.method = "nerlove", restrict.matrix = R)
+summary(est1)
 
 # Elasticities of translog cost function
 
