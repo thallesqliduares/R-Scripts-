@@ -134,7 +134,7 @@ R[1,80]<-R[2,87]<-R[3,81]<-R[4,88]<-R[5,82]<-R[6,89]<-R[7,83]<-R[8,90]<-R[9,84]<
 
 #R
 
-#Estimation of SUR model
+#Estimation of SUR panel data model
 
 est1<-plm(list(ct~AguaProd+EsgCol+LigAtv+ExtRed+p2+p3+AgEsg+AgLig+AgExt+Agp2+Agp3+AgAg+
                  +EsgLig+EsgExt+Esgp2+Esgp3+EsgEsg+LigExt+Ligp2+Ligp3+LigLig+Extp2+Extp3
